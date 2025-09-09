@@ -1,1 +1,74 @@
 Nearby helps users find nearby shops based on their preferences. Users provide a list of product categories they are interested in, assigning scores to indicate their level of interest. For example, a user might rate phones as 5, TVs as 4, laptops as 3, refrigerators as 2, and washing machines as 1. These preferences are converted into a matrix using pandas, where each row represents a user and each column represents a product category. To generate recommendations, FindNear uses the k-Nearest Neighbors (k-NN) algorithm from scikit-learn, which finds the most relevant matches based on cosine similarity. The system first trains on user preferences, and when a user searches for a specific category, k-NN filters and ranks shops based on relevance. It then selects the top three matching shops for the given category. For example, if a user searches for TVs, FindNear might suggest shops like Gizmo Galaxy, TV Fusion, and ElectroMart. k-NN is chosen for its simplicity, speed, and efficiency, making it ideal for small datasets without requiring extensive training. Unlike complex AI models, k-NN acts as a smart filter that quickly finds the best recommendations based on user preferences, ensuring an efficient and lightweight experience.
+
+# AI Shop Recommendation & Locator
+
+## 1) Overview
+
+This model helps to:
+
+* Find nearest shops by category using geodesic distance.
+* Recommend shops based on a simple user–category model.
+
+## 2) Quickstart
+
+```bash
+# Clone your repo
+git clone <your-repo-url>
+cd <your-repo-folder>
+
+# Create virtual environment (optional)
+python -m venv .venv
+.venv\Scripts\activate   # On Windows
+source .venv/bin/activate # On Linux/macOS
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the model
+python main.py
+```
+
+## 3) Requirements
+
+* Python 3.9–3.12
+* Packages (in requirements.txt):
+
+  * sentence-transformers
+  * torch (CPU version is fine)
+  * scikit-learn
+  * pandas
+  * numpy
+  * geopy
+
+### Example `requirements.txt`
+
+```txt
+sentence-transformers
+torch
+scikit-learn
+pandas
+numpy
+geopy
+```
+
+## 4) Run Demo
+
+```bash
+python main.py
+```
+
+It will ask for:
+
+* Colony name
+* Address
+* Category
+
+And it prints **nearest shops** + **recommendations**.
+
+## 5) Notes
+
+* First run downloads the `all-MiniLM-L6-v2` model (\~100MB).
+* If geocoding fails, check internet connection or use a simpler address.
+
+That’s it — only basic steps needed to run the model locally.
+
