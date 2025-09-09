@@ -1,97 +1,10 @@
-# from sentence_transformers import SentenceTransformer, util
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.model_selection import train_test_split
-# import pandas as pd
-# from geopy.distance import geodesic
-#
-# model = SentenceTransformer('all-MiniLM-L6-v2')
-#
-# product_list = [
-#     "iPhone 15 Pro Max 128GB Midnight Blue",
-#     "iPhone 14 Pro Max 128GB Silver",
-#     "Samsung Galaxy S23 Ultra 256GB",
-#     "iPhone 13 Mini 64GB",
-#     "OnePlus 9 Pro 256GB"
-# ]
-#
-# queries = [
-#     "iPhone 15 Pro Max 128GB Midnight Blue",
-#     "iPhone 14 Pro Max"
-# ]
-#
-# store_data = {
-#     'store_id': [1, 2, 3, 4, 5],
-#     'product': ["iPhone 15", "iPhone 15", "iPhone 15", "Grocery Store", "Fashion Store"],
-#     'category': ["electronics", "electronics", "electronics", "groceries", "mobile"],
-#     'latitude': [19.0760, 28.7041, 13.0827, 17.4434, 17.4375],
-#     'longitude': [72.8777, 77.1025, 80.2707, 78.4434, 78.4475],
-#     'rating': [4.5, 4.2, 4.8, 4.0, 3.8],
-#     'timings': ["10:00 AM - 9:00 PM", "10:00 AM - 8:00 PM", "10:00 AM - 7:00 PM", "8:00 AM - 10:00 PM",
-#                 "11:00 AM - 9:00 PM"],
-#     'is_available': [1, 0, 1, 1, 0],
-# }
-#
-# def find_best_match(query, product_list):
-#     query_embedding = model.encode(query, convert_to_tensor=True)
-#     product_embeddings = model.encode(product_list, convert_to_tensor=True)
-#     similarities = util.pytorch_cos_sim(query_embedding, product_embeddings)
-#     best_match_index = similarities.argmax()
-#     return product_list[best_match_index]
-#
-# for query in queries:
-#     best_match = find_best_match(query, product_list)
-#     print(f"Query: {query}\nBest Match: {best_match}\n")
-#
-# df = pd.DataFrame(store_data)
-# df['product'] = pd.factorize(df['product'])[0]
-#
-# X = df.drop(['is_available', 'latitude', 'longitude', 'category', 'rating', 'timings'], axis=1)
-# y = df['is_available']
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-#
-# model_rf = RandomForestClassifier()
-# model_rf.fit(X_train, y_train)
-#
-# new_data = pd.DataFrame({'store_id': [1], 'product': [0], 'day_of_week': [1]})
-# new_data = new_data[['store_id', 'product']]
-#
-#
-#
-#
-#
-#
-# availability_prediction = model_rf.predict(new_data)
-# print(f"\nProduct availability prediction: {'In Stock' if availability_prediction[0] else 'Out of Stock'}")
-#
-# def find_nearest_store(user_location, store_data):
-#     closest_store = None
-#     min_distance = float('inf')
-#     for index, row in store_data.iterrows():
-#         store_location = (row['latitude'], row['longitude'])
-#         distance = geodesic(user_location, store_location).kilometers
-#         if distance < min_distance:
-#             min_distance = distance
-#             closest_store = row
-#     return closest_store, min_distance
-#
-# user_location = (17.4318, 78.4434)
-#
-# closest_store, distance = find_nearest_store(user_location, df)
-# print(f"\nNearest store details:")
-# print(f"Store ID: {closest_store['store_id']}")
-# print(f"Category: {closest_store['category']}")
-# print(f"Product Available: {closest_store['product']}")
-# print(f"Rating: {closest_store['rating']}")
-# print(f"Store Timings: {closest_store['timings']}")
-# print(f"Distance to Store: {distance:.2f} km")
-
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 
-# 📌 Dataset: 80+ Shops from Banjara Hills, KPHB, Mehdipatnam, Gachibowli
+# Dataset: 80+ Shops from Banjara Hills, KPHB, Mehdipatnam, Gachibowli
 shop_data = [
     # Banjara Hills Shops (20 total)
     {"name": "Magna Hypermarket", "category": "grocery", "latitude": 17.4149, "longitude": 78.4385, "rating": 4.5,
@@ -265,7 +178,7 @@ shop_data = [
 # Convert list to DataFrame
 df = pd.DataFrame(shop_data)
 
-# 📌 Simulated User Preference Data (category interest scores)
+#  Simulated User Preference Data (category interest scores)
 # For simplicity, we'll use a small dataset of user-category interactions
 user_data = {
     "user": ["user1", "user1", "user1", "user2", "user2"],
@@ -277,12 +190,12 @@ user_df = pd.DataFrame(user_data)
 # Create a pivot table for user-category matrix
 user_category_matrix = user_df.pivot_table(index="user", columns="category", values="interest", fill_value=0)
 
-# 📌 Train k-NN Model
+#  Train k-NN Model
 knn = NearestNeighbors(metric="cosine", algorithm="brute")
 knn.fit(user_category_matrix.values)
 
 
-# 📌 Function to get latitude & longitude from user address
+#  Function to get latitude & longitude from user address
 def get_lat_lon(address):
     geolocator = Nominatim(user_agent="shop_locator")
     location = geolocator.geocode(address)
@@ -292,7 +205,7 @@ def get_lat_lon(address):
         return None
 
 
-# 📌 Function to find the 5 nearest shops in a given category
+# Function to find the 5 nearest shops in a given category
 def find_nearest_shops(user_location, category):
     filtered_shops = df[df["category"] == category]
 
@@ -306,7 +219,7 @@ def find_nearest_shops(user_location, category):
     return nearest_shops[:5]  # Return top 5 nearest shops
 
 
-# 📌 Function to get AI-based shop recommendations
+#  Function to get AI-based shop recommendations
 def get_ai_recommendations(user_id, current_category):
     # Simulate user's current interest vector
     user_vector = user_category_matrix.loc[user_id].values.reshape(1, -1)
@@ -324,7 +237,7 @@ def get_ai_recommendations(user_id, current_category):
     return recommended_shops[["name", "category", "rating", "timings"]].head(3)  # Top 3 recommendations
 
 
-# 📌 Main Program
+#  Main Program
 user_id = "user1"  # Simulate a user (could be dynamic with more development)
 user_colony = input("Enter your colony name: ")
 user_address = input(f"Enter your address in {user_colony}: ")
@@ -348,4 +261,5 @@ if user_location:
     for _, row in ai_recommendations.iterrows():
         print(f"- {row['name']} ({row['category']}) - ⭐ {row['rating']} - Open: {row['timings']}")
 else:
+
     print("Invalid address! Please try again with a valid address.")
